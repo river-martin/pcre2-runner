@@ -6,7 +6,8 @@
 
 int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
 {
-  int errornumber, erroroffset;
+  int errornumber;
+  size_t erroroffset;
 
   pcre2_code *re = pcre2_compile(
       pattern,               /* the pattern */
@@ -81,6 +82,7 @@ int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
     PCRE2_SIZE substring_length = ovector[2 * i + 1] - ovector[2 * i];
     printf("\n[match_1.group_%d]\nspan = [ %d, %d,]\nstr = \"%.*s\"\n", i, (int)(substring_start - subject), (int)(substring_start + substring_length - subject), (int)substring_length, (char *)substring_start);
   }
+  return 1;
 }
 
 int main(int argc, char *argv[])
@@ -90,5 +92,5 @@ int main(int argc, char *argv[])
     printf("Usage: %s <pattern> <subject>\n", argv[0]);
     return 1;
   }
-  match((PCRE2_SPTR)argv[1], (PCRE2_SPTR)argv[2]);
+  return match((PCRE2_SPTR)argv[1], (PCRE2_SPTR)argv[2]);
 }
