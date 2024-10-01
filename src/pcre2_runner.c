@@ -56,7 +56,7 @@ int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
 
     /* Match succeeded. Get a pointer to the output vector, where string offsets
     are stored. */
-    printf("[match_1]\n");
+    printf("[match_1]\n\n");
     PCRE2_SIZE *ovector = pcre2_get_ovector_pointer(match_data);
 
     /*************************************************************************
@@ -74,7 +74,7 @@ int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
     for (int i = 0; i < rc; i++) {
         PCRE2_SPTR substring_start  = subject + ovector[2 * i];
         PCRE2_SIZE substring_length = ovector[2 * i + 1] - ovector[2 * i];
-        printf("\n[match_1.group_%d]\nspan = [%d, %d]\nstr = '''%.*s'''\n", i,
+        printf("[match_1.group_%d]\nspan = [%d, %d]\nstr = '''%.*s'''\n\n", i,
                (int) (substring_start - subject),
                (int) (substring_start + substring_length - subject),
                (int) substring_length, (char *) substring_start);
