@@ -45,7 +45,7 @@ int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
 
     if (rc < 0) {
         switch (rc) {
-            case PCRE2_ERROR_NOMATCH: printf("No match\n"); break;
+            case PCRE2_ERROR_NOMATCH: printf("# no match\n\n"); break;
             default: printf("Matching error %d\n", rc); break;
         }
         pcre2_match_data_free(
