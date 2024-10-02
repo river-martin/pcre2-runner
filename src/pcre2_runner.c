@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
+void match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
 {
     int    errornumber;
     size_t erroroffset;
@@ -24,7 +24,7 @@ int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
         pcre2_get_error_message(errornumber, buffer, sizeof(buffer));
         printf("PCRE2 compilation failed at offset %d: %s\n", (int) erroroffset,
                buffer);
-        return 1;
+        return;
     }
 
     pcre2_match_data *match_data =
@@ -51,7 +51,7 @@ int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
         pcre2_match_data_free(
             match_data);     /* Release memory used for the match */
         pcre2_code_free(re); /*   data and the compiled pattern. */
-        return 1;
+        return;
     }
 
     /* Match succeeded. Get a pointer to the output vector, where string offsets
@@ -79,14 +79,34 @@ int match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
                (int) (substring_start + substring_length - subject),
                (int) substring_length, (char *) substring_start);
     }
-    return 1;
+}
+
+char *read_file(const char *filename)
+{
+    FILE *input_file = fopen(filename, "r");
+    if (input_file == NULL) {
+        fprintf(stderr, "ERROR: failed to open input file %s\n", filename);
+        return NULL;
+    }
+    fseek(input_file, 0, SEEK_END);
+    long input_file_size = ftell(input_file);
+    fseek(input_file, 0, SEEK_SET);
+    char *input_file_contents = malloc(input_file_size + 1);
+    fread(input_file_contents, 1, input_file_size, input_file);
+    input_file_contents[input_file_size] = '\0';
+    fclose(input_file);
+    return input_file_contents;
 }
 
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        printf("Usage: %s <pattern> <subject>\n", argv[0]);
-        return 1;
+        printf("Usage: %s <pattern> <input_file_name>\n", argv[0]);
+        return EXIT_FAILURE;
     }
-    return match((PCRE2_SPTR) argv[1], (PCRE2_SPTR) argv[2]);
+    char *input_string = read_file(argv[2]);
+    if (!input_string) return EXIT_SUCCESS;
+    match((PCRE2_SPTR) argv[1], (PCRE2_SPTR) input_string);
+    free(input_string);
+    return EXIT_SUCCESS;
 }
