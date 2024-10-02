@@ -1,10 +1,11 @@
 #define PCRE2_CODE_UNIT_WIDTH 8
+#include <assert.h>
 #include <pcre2.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void match(PCRE2_SPTR pattern, PCRE2_SPTR subject)
+void match(const PCRE2_SPTR pattern, const PCRE2_SPTR subject)
 {
     int    errornumber;
     size_t erroroffset;
@@ -101,12 +102,14 @@ char *read_file(const char *filename)
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        printf("Usage: %s <pattern> <input_file_name>\n", argv[0]);
+        printf("Usage: %s <regex_file_path> <input_file_name>\n", argv[0]);
         return EXIT_FAILURE;
     }
+    char *regex        = read_file(argv[1]);
     char *input_string = read_file(argv[2]);
-    if (!input_string) return EXIT_SUCCESS;
-    match((PCRE2_SPTR) argv[1], (PCRE2_SPTR) input_string);
+    if (!regex || !input_string) return EXIT_FAILURE;
+    match((const PCRE2_SPTR) regex, (const PCRE2_SPTR) input_string);
     free(input_string);
+    free(regex);
     return EXIT_SUCCESS;
 }
