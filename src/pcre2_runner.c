@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void match(const PCRE2_SPTR pattern, const PCRE2_SPTR subject)
+PCRE2_SIZE *match(const PCRE2_SPTR pattern, const PCRE2_SPTR subject)
 {
     int    errornumber;
     size_t erroroffset;
@@ -22,8 +22,7 @@ void match(const PCRE2_SPTR pattern, const PCRE2_SPTR subject)
     if (re == NULL) {
         PCRE2_UCHAR buffer[256];
         pcre2_get_error_message(errornumber, buffer, sizeof(buffer));
-        printf("PCRE2 compilation failed at offset %d: %s\n", (int) erroroffset,
-               buffer);
+        printf("outcome = '''COMPILATION_FAILURE'''\n");
         return;
     }
 
@@ -46,7 +45,7 @@ void match(const PCRE2_SPTR pattern, const PCRE2_SPTR subject)
     if (rc < 0) {
         switch (rc) {
             case PCRE2_ERROR_NOMATCH: printf("# no match\n\n"); break;
-            default: printf("Matching error %d\n", rc); break;
+            default: printf("# Matching error %d\n", rc); break;
         }
         pcre2_match_data_free(
             match_data);     /* Release memory used for the match */
@@ -79,6 +78,7 @@ void match(const PCRE2_SPTR pattern, const PCRE2_SPTR subject)
                (int) (substring_start + substring_length - subject),
                (int) substring_length, (char *) substring_start);
     }
+    return ovector;
 }
 
 char *read_file(const char *filename)
