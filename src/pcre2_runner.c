@@ -1,6 +1,5 @@
-#define PCRE2_CODE_UNIT_WIDTH 8
+#include "../include/pcre2_runner.h"
 #include <assert.h>
-#include <pcre2.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
